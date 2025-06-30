@@ -1,19 +1,48 @@
-﻿@page "/counter"
+﻿@page "/leads"
 @rendermode InteractiveServer
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Leads</PageTitle>
 
-<h1>Counter</h1>
-
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<h1>New Leads</h1>
+<MudGrid>
+    <MudItem>
+        <MudFileUpload T="IBrowserFile" Accept=".xlsx" FilesChanged="AddFile" MaximumFileCount="10">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                    StartIcon="@Icons.Material.Filled.CloudUpload">
+                    Upload Excel files
+                </MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+    </MudItem>
+    <MudItem>
+        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error"
+            OnClick="ClearFiles">Clear</MudButton>
+    </MudItem>
+    <MudItem>
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Submit</MudButton>
+    </MudItem>
+</MudGrid>
+@if (files != null)
+{
+    <MudList T="string">
+        @foreach (var file in files)
+        {
+            <MudListItem Icon="@Icons.Material.Filled.AttachFile">
+                @file.Name <code>@(file.Size / 1000) kb</code>
+            </MudListItem>
+        }
+    </MudList>
+}
 
 @code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private void AddFile(IBrowserFile file)
     {
-        currentCount++;
+        files.Add(file);
+    }
+    private void ClearFiles()
+    {
+        files.Clear();
     }
 }
