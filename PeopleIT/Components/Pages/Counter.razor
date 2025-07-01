@@ -1,4 +1,5 @@
 ﻿@page "/leads"
+@using PeopleIT.Models
 @rendermode InteractiveServer
 
 <PageTitle>Leads</PageTitle>
@@ -6,7 +7,7 @@
 <h1>New Leads</h1>
 <MudGrid>
     <MudItem>
-        <MudFileUpload T="IBrowserFile" Accept=".xlsx" FilesChanged="AddFile" MaximumFileCount="10">
+        <MudFileUpload T="IBrowserFile" Accept=".xlsx" FilesChanged="AddFile" MaximumFileCount="5">
             <ActivatorContent>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary"
                     StartIcon="@Icons.Material.Filled.CloudUpload">
@@ -20,7 +21,8 @@
             OnClick="ClearFiles">Clear</MudButton>
     </MudItem>
     <MudItem>
-        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Submit</MudButton>
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Submit
+        </MudButton>
     </MudItem>
 </MudGrid>
 @if (files != null)
@@ -34,15 +36,60 @@
         }
     </MudList>
 }
+else
+{
+    <MudText Color="Color.Warning">Select files.</MudText>
+}
+
+@if (leads.Any())
+{
+    <MudTable Items="@leads">
+        <HeaderContent>
+            <MudTh>Quote Sent Date</MudTh>
+            <MudTh>Salesperson</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.QuoteSentDate</MudTd>
+            <MudTd>@context.Salesperson</MudTd>
+        </RowTemplate>
+    </MudTable>
+} else if(files?.Count>0&&leads.Count<1)
+{
+    <MudText Color="Color.Error">No entries found!</MudText>
+}
+
 
 @code {
     IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void AddFile(IBrowserFile file)
+    List<Lead> leads = new List<Lead>();
+    private async void AddFile(IBrowserFile file)
     {
         files.Add(file);
+
+        using var stream = file.OpenReadStream(10 * 1024 * 1024);
+        using var memStream = new MemoryStream();
+        await stream.CopyToAsync(memStream);
+        memStream.Position = 0;
+
+        using var workbook = new ClosedXML.Excel.XLWorkbook(memStream);
+        var worksheet = workbook.Worksheets.First();
+
+
+        foreach (var row in worksheet.RowsUsed().Skip(1))
+        {
+            var quoteSentDate = row.Cell(1).GetString();
+            var salesPerson = row.Cell(2).GetString();
+            var projectName = row.Cell(3).GetString();
+            var projectCode = row.Cell(4).GetString();
+            var customer = row.Cell(5).GetString();
+            leads.Add(new Lead(quoteSentDate, salesPerson, projectName, projectCode, customer));
+        }
+        StateHasChanged();
     }
     private void ClearFiles()
     {
         files.Clear();
+        leads.Clear();
+        StateHasChanged();
     }
 }
