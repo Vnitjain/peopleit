@@ -1,0 +1,39 @@
+@using PeopleIT.Data.Models
+@if (Leads != null && Leads.Any())
+{
+    <MudTable Items="@Leads">
+        <HeaderContent>
+            <MudTh>Quote Sent Date</MudTh>
+            <MudTh>Salesperson</MudTh>
+            <MudTh>Project Name</MudTh>
+            <MudTh>Project Code</MudTh>
+            <MudTh>Customer</MudTh>
+            <MudTh>Customer City</MudTh>
+            <MudTh>Customer State</MudTh>
+            <MudTh>Marketing Category</MudTh>
+            <MudTh># Of Quotes</MudTh>
+            <MudTh>Total Net</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.QuoteSentDate.ToString("d")</MudTd>
+            <MudTd>@context.Salesperson</MudTd>
+            <MudTd>@context.ProjectName</MudTd>
+            <MudTd>@context.ProjectCode</MudTd>
+            <MudTd>@context.Customer</MudTd>
+            <MudTd>@context.CustomerCity</MudTd>
+            <MudTd>@context.CustomState</MudTd>
+            <MudTd>@context.MarketingCategory</MudTd>
+            <MudTd>@context.NoOfQuotes</MudTd>
+            <MudTd>@context.TotalNet</MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+else
+{
+    <MudText Color="Color.Error">No entries found!</MudText>
+}
+
+@code {
+    [Parameter]
+    public List<Lead> Leads { get; set; }
+}

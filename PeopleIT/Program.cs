@@ -1,11 +1,14 @@
 using PeopleIT.Components;
 using MudBlazor.Services;
+using Microsoft.EntityFrameworkCore;
+using PeopleIT.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddDbContext<PeopleITDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddMudServices();
 
 var app = builder.Build();

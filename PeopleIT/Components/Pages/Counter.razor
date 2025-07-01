@@ -1,5 +1,5 @@
 ﻿@page "/leads"
-@using PeopleIT.Models
+@using PeopleIT.Data.Models
 @rendermode InteractiveServer
 
 <PageTitle>Leads</PageTitle>
@@ -41,22 +41,9 @@ else
     <MudText Color="Color.Warning">Select files.</MudText>
 }
 
-@if (leads.Any())
-{
-    <MudTable Items="@leads">
-        <HeaderContent>
-            <MudTh>Quote Sent Date</MudTh>
-            <MudTh>Salesperson</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd>@context.QuoteSentDate</MudTd>
-            <MudTd>@context.Salesperson</MudTd>
-        </RowTemplate>
-    </MudTable>
-} else if(files?.Count>0&&leads.Count<1)
-{
-    <MudText Color="Color.Error">No entries found!</MudText>
-}
+<LeadsTable Leads="leads" /> 
+
+
 
 
 @code {
@@ -77,12 +64,17 @@ else
 
         foreach (var row in worksheet.RowsUsed().Skip(1))
         {
-            var quoteSentDate = row.Cell(1).GetString();
+            var quoteSentDate = DateTime.Parse(row.Cell(1).GetString());
             var salesPerson = row.Cell(2).GetString();
-            var projectName = row.Cell(3).GetString();
             var projectCode = row.Cell(4).GetString();
             var customer = row.Cell(5).GetString();
-            leads.Add(new Lead(quoteSentDate, salesPerson, projectName, projectCode, customer));
+            var customerCity = row.Cell(6).GetString();
+            var customerState = row.Cell(7).GetString();
+            var marketingCategory = row.Cell(8).GetString();
+            var noOfQuotes = Int32.Parse(row.Cell(9).GetString());
+            var totalNet = Double.Parse(row.Cell(10).GetString());
+
+            leads.Add(new Lead(quoteSentDate, salesPerson, projectCode, projectCode,customer, customerCity, customerState,marketingCategory, noOfQuotes, totalNet));
         }
         StateHasChanged();
     }
