@@ -25,7 +25,8 @@
             OnClick="ClearFiles">Clear</MudButton>
     </MudItem>
     <MudItem>
-        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Submit
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary"
+            OnClick="SaveNewLeadsToDatabase">Save the leads
         </MudButton>
     </MudItem>
 </MudGrid>
@@ -46,7 +47,7 @@ else
 }
 
 @* <LeadsTable Leads="leads" /> *@
-<LeadsTable Leads="newLeadsToAdd"/>
+<LeadsTable Leads="newLeadsToAdd" />
 
 @code {
     IList<IBrowserFile> files = new List<IBrowserFile>();
@@ -80,7 +81,7 @@ else
             var noOfQuotes = Int32.Parse(row.Cell(9).GetString());
             var totalNet = Double.Parse(row.Cell(10).GetString());
 
-            leads.Add(new Lead(quoteSentDate, salesPerson, projectCode, projectCode, customer, customerCity,
+            leads.Add(new Lead(quoteSentDate, salesPerson, projectName, projectCode, customer, customerCity,
             customerState, marketingCategory, noOfQuotes, totalNet));
         }
 
@@ -111,15 +112,33 @@ else
     {
         newLeadsToAdd.Clear();
 
-        foreach (var excelLead in leads)
+        newLeadsToAdd = leads.Distinct().Except(dbleads).ToList();
+
+        Console.WriteLine($"{newLeadsToAdd.Count} new leads found to add.");
+    }
+    private async Task SaveNewLeadsToDatabase()
+    {
+        if (newLeadsToAdd.Count == 0)
         {
-            if (!dbleads.Any(dbLead => dbLead.Equals(excelLead)))
-            {
-                newLeadsToAdd.Add(excelLead);
-            }
+            Console.WriteLine("No new leads to save.");
+            return;
         }
 
-        Console.WriteLine($"{newLeadsToAdd.Count} new leads found.");
+        try
+        {
+            await _context.Leads.AddRangeAsync(newLeadsToAdd);
+            await _context.SaveChangesAsync();
+
+            Console.WriteLine($"{newLeadsToAdd.Count} new leads saved to database.");
+
+            await LoadLeadsFromDatabase();
+            newLeadsToAdd.Clear();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving leads: {ex.Message}");
+        }
     }
     private void ClearFiles()
     {
