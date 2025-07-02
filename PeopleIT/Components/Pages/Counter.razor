@@ -9,6 +9,7 @@
 <PageTitle>Leads</PageTitle>
 
 <h1>New Leads</h1>
+<Loader IsLoading="@isLoading"/>
 <MudGrid>
     <MudItem>
         <MudFileUpload T="IBrowserFile" Accept=".xlsx" FilesChanged="AddFile" MaximumFileCount="5">
@@ -54,6 +55,7 @@ else
     List<Lead> leads = new List<Lead>();
     List<Lead> dbleads = new List<Lead>();
     List<Lead> newLeadsToAdd = new List<Lead>();
+        bool isLoading = false;
     private async void AddFile(IBrowserFile file)
     {
         files.Add(file);
@@ -92,6 +94,7 @@ else
     }
     private async Task LoadLeadsFromDatabase()
     {
+        isLoading = true;
         dbleads.Clear();
         StateHasChanged();
 
@@ -106,6 +109,7 @@ else
         finally
         {
             StateHasChanged();
+            isLoading = false;
         }
     }
     private void CompareAndFindNewLeads()
@@ -118,6 +122,7 @@ else
     }
     private async Task SaveNewLeadsToDatabase()
     {
+        isLoading = true;
         if (newLeadsToAdd.Count == 0)
         {
             Console.WriteLine("No new leads to save.");
@@ -139,6 +144,7 @@ else
         {
             Console.WriteLine($"Error saving leads: {ex.Message}");
         }
+        isLoading = false;
     }
     private void ClearFiles()
     {
