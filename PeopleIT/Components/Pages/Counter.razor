@@ -1,5 +1,9 @@
 ﻿@page "/leads"
+
+@using Microsoft.EntityFrameworkCore
+@using PeopleIT.Data
 @using PeopleIT.Data.Models
+@inject PeopleITDBContext _context
 @rendermode InteractiveServer
 
 <PageTitle>Leads</PageTitle>
@@ -41,7 +45,10 @@ else
     <MudText Color="Color.Warning">Select files.</MudText>
 }
 
-<LeadsTable Leads="leads" /> 
+<LeadsTable Leads="leads" />
+
+From Database: 
+<LeadsTable Leads="dbleads" />
 
 
 
@@ -49,6 +56,12 @@ else
 @code {
     IList<IBrowserFile> files = new List<IBrowserFile>();
     List<Lead> leads = new List<Lead>();
+        List<Lead> dbleads =  new List<Lead>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        dbleads = await _context.Leads.OrderByDescending(l => l.QuoteSentDate).ToListAsync();
+    }
     private async void AddFile(IBrowserFile file)
     {
         files.Add(file);
@@ -74,7 +87,8 @@ else
             var noOfQuotes = Int32.Parse(row.Cell(9).GetString());
             var totalNet = Double.Parse(row.Cell(10).GetString());
 
-            leads.Add(new Lead(quoteSentDate, salesPerson, projectCode, projectCode,customer, customerCity, customerState,marketingCategory, noOfQuotes, totalNet));
+            leads.Add(new Lead(quoteSentDate, salesPerson, projectCode, projectCode, customer, customerCity,
+            customerState, marketingCategory, noOfQuotes, totalNet));
         }
         StateHasChanged();
     }
