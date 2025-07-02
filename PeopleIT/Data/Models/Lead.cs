@@ -4,10 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PeopleIT.Data.Models
 {
-    [Keyless]
-    public class Lead
+    public class Lead : IEquatable<Lead>
     {
-        public Lead(DateTime quoteSentDate, string salesperson, string projectname, string projectcode, string customer,string customerCity,string customState, string marketingCategoy, int noOfQuotes, double totalNet)
+        public Lead(DateTime quoteSentDate, string salesperson, string projectname, string projectcode, string customer, string customerCity, string customState, string marketingCategoy, int noOfQuotes, double totalNet)
         {
             QuoteSentDate = quoteSentDate;
             Salesperson = salesperson;
@@ -23,6 +22,24 @@ namespace PeopleIT.Data.Models
         public Lead()
         {
 
+        }
+
+        public bool Equals(Lead? otherObject)
+        {
+            return QuoteSentDate == otherObject.QuoteSentDate
+             && string.Equals(Salesperson, otherObject.Salesperson, StringComparison.OrdinalIgnoreCase)
+             && string.Equals(ProjectName, otherObject.ProjectName, StringComparison.OrdinalIgnoreCase);
+        }
+        public override bool Equals(object obj) => Equals(obj as Lead);
+
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(
+                QuoteSentDate,
+                Salesperson?.ToLowerInvariant(),
+                ProjectName?.ToLowerInvariant()
+            );
         }
         public DateTime QuoteSentDate { get; set; }
 
@@ -42,6 +59,8 @@ namespace PeopleIT.Data.Models
         public string MarketingCategory { get; set; }
         public int NoOfQuotes { get; set; }
         public double TotalNet { get; set; }
+
+
 
     }
 }

@@ -47,21 +47,10 @@ else
 
 <LeadsTable Leads="leads" />
 
-From Database: 
-<LeadsTable Leads="dbleads" />
-
-
-
-
 @code {
     IList<IBrowserFile> files = new List<IBrowserFile>();
     List<Lead> leads = new List<Lead>();
         List<Lead> dbleads =  new List<Lead>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        dbleads = await _context.Leads.OrderByDescending(l => l.QuoteSentDate).ToListAsync();
-    }
     private async void AddFile(IBrowserFile file)
     {
         files.Add(file);
@@ -91,6 +80,25 @@ From Database:
             customerState, marketingCategory, noOfQuotes, totalNet));
         }
         StateHasChanged();
+    }
+    private async Task LoadLeadsFromDatabase()
+    {
+        dbleads.Clear();
+        StateHasChanged();
+
+        try
+        {
+            dbleads = await _context.Leads.OrderByDescending(l => l.QuoteSentDate).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading leads from database: {ex.Message}");
+            
+        }
+        finally
+        {   
+            StateHasChanged();
+        }
     }
     private void ClearFiles()
     {

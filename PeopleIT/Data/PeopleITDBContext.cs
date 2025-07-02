@@ -10,5 +10,13 @@ namespace PeopleIT.Data
         {
         }
         public DbSet<Lead> Leads { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Lead>()
+            .HasKey(l => new { l.QuoteSentDate, l.Salesperson, l.ProjectName });
+
+        base.OnModelCreating(modelBuilder);
+    }
     }
 }
