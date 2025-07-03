@@ -39,6 +39,13 @@ This is a Blazor Server application called PeopleIT, designed to manage and impo
 4.  **Run the Application:**
     Build and run the application from your IDE. The application will typically be accessible at `https://localhost:3000`.
 
+### Key Components
+
+*   **`PeopleIT/Components/Pages/Counter.razor`:**  A simple counter component, likely used for demonstration purposes.
+*   **`PeopleIT/Components/Pages/Error.razor`:**  Displays error information, including a request ID and development mode details.
+*   **`PeopleIT/Components/Pages/Leads.razor`:**  The primary component for lead management.  It handles file uploads, displays a list of selected files, and provides a "Save" button.
+*   **`PeopleIT/Data/PeopleITDBContext.cs`**:  The database context class responsible for interacting with the database.
+*   **`PeopleIT/Data/Models/Lead.cs`**:  Model class representing a Lead record.
 
 ## Database Connection Details
 
@@ -54,14 +61,6 @@ The application relies on a properly configured database connection. Here's a su
   "PeopleITDB": "Server=your_server;Database=your_database;User Id=your_user;Password=your_password;"
 }
 ```
-
-### Key Components
-
-*   **`PeopleIT/Components/Pages/Counter.razor`:**  A simple counter component, likely used for demonstration purposes.
-*   **`PeopleIT/Components/Pages/Error.razor`:**  Displays error information, including a request ID and development mode details.
-*   **`PeopleIT/Components/Pages/Leads.razor`:**  The primary component for lead management.  It handles file uploads, displays a list of selected files, and provides a "Save" button.
-*   **`PeopleIT/Data/PeopleITDBContext.cs`**:  The database context class responsible for interacting with the database.
-*   **`PeopleIT/Data/Models/Lead.cs`**:  Model class representing a Lead record.
 
 ## Usage
 
