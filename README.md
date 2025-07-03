@@ -25,7 +25,7 @@ This is a Blazor Server application called PeopleIT, designed to manage and impo
 
 1.  **Clone the Repository:**
     ```bash
-    git clone <repository_url>
+    git clone https://github.com/Vnitjain/peopleit.git
     ```
 
 2.  **Restore NuGet Packages:**
@@ -37,7 +37,23 @@ This is a Blazor Server application called PeopleIT, designed to manage and impo
     *   Make sure the database exists and the PeopleITDBContext can connect successfully.
 
 4.  **Run the Application:**
-    Build and run the application from your IDE. The application will typically be accessible at `https://localhost:<port>`.
+    Build and run the application from your IDE. The application will typically be accessible at `https://localhost:3000`.
+
+
+## Database Connection Details
+
+The application relies on a properly configured database connection. Here's a summary:
+
+*   **Database Context:** `PeopleITDBContext`
+*   **Configuration File:** `appsettings.json` (typically)
+*   **Connection String Key:**  `ConnectionStrings:PeopleITDB`
+*   **Example Connection String:**
+
+```json
+"ConnectionStrings": {
+  "PeopleITDB": "Server=your_server;Database=your_database;User Id=your_user;Password=your_password;"
+}
+```
 
 ### Key Components
 
