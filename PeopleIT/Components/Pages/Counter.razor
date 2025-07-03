@@ -9,7 +9,12 @@
 <PageTitle>Leads</PageTitle>
 
 <h1>New Leads</h1>
-<Loader IsLoading="@isLoading"/>
+<Loader IsLoading="@isLoading" />
+@if (showCallAlert)
+{
+    <MudAlert Severity="@(isSuccessAlert ? Severity.Success : Severity.Error)" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true"
+        CloseIconClicked="(() => showCallAlert=false)">@alertMessage</MudAlert>
+}
 <MudGrid>
     <MudItem>
         <MudFileUpload T="IBrowserFile" Accept=".xlsx" FilesChanged="AddFile" MaximumFileCount="5">
@@ -55,7 +60,10 @@ else
     List<Lead> leads = new List<Lead>();
     List<Lead> dbleads = new List<Lead>();
     List<Lead> newLeadsToAdd = new List<Lead>();
-        bool isLoading = false;
+    bool isLoading = false;
+    bool showCallAlert = false;
+    string alertMessage = "";
+    bool isSuccessAlert = true;
     private async void AddFile(IBrowserFile file)
     {
         files.Add(file);
@@ -104,12 +112,12 @@ else
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading leads from database: {ex.Message}");
+            ShowAlerts(true, $"Error loading leads from database: {ex.Message}", false);
         }
         finally
         {
-            StateHasChanged();
             isLoading = false;
+            StateHasChanged();
         }
     }
     private void CompareAndFindNewLeads()
@@ -118,14 +126,15 @@ else
 
         newLeadsToAdd = leads.Distinct().Except(dbleads).ToList();
 
-        Console.WriteLine($"{newLeadsToAdd.Count} new leads found to add.");
+        ShowAlerts(true, $"{newLeadsToAdd.Count} new leads found to add.", true);
     }
     private async Task SaveNewLeadsToDatabase()
     {
         isLoading = true;
         if (newLeadsToAdd.Count == 0)
         {
-            Console.WriteLine("No new leads to save.");
+            ShowAlerts(true, "No new leads to save.", false);
+            isLoading=false;
             return;
         }
 
@@ -133,21 +142,29 @@ else
         {
             await _context.Leads.AddRangeAsync(newLeadsToAdd);
             await _context.SaveChangesAsync();
-
-            Console.WriteLine($"{newLeadsToAdd.Count} new leads saved to database.");
-
-            await LoadLeadsFromDatabase();
-            newLeadsToAdd.Clear();
-            StateHasChanged();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving leads: {ex.Message}");
+            ShowAlerts(true, $"Error saving leads: {ex.Message}", false);
         }
-        isLoading = false;
+        finally
+        {
+            ShowAlerts(true, $"{newLeadsToAdd.Count} new leads saved to database.", true);
+            await LoadLeadsFromDatabase();
+            newLeadsToAdd.Clear();
+            isLoading = false;
+            StateHasChanged();
+        }
     }
+    private void ShowAlerts(bool show, string message, bool isSucess)
+    {
+        showCallAlert = show; alertMessage = message; isSuccessAlert = isSucess;
+        Console.WriteLine(message);
+    }
+
     private void ClearFiles()
     {
+        ShowAlerts(false, "", false);
         files.Clear();
         leads.Clear();
         newLeadsToAdd.Clear();
