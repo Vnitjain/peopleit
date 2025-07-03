@@ -1,0 +1,285 @@
+﻿@page "/"
+@using MudBlazor
+
+<MudContainer Class="mt-8">
+    <MudGrid Spacing="3">
+        <MudItem Xs="12">
+            <MudPaper Outlined="true" Class="pa-4">
+                <MudGrid Spacing="2" Justify="Justify.Center">
+                    <MudItem Xs="12" Sm="8">
+                        <MudText Typo="Typo.h3" Align="Align.Center">@Resume.Name</MudText>
+                        <MudText Typo="Typo.subtitle1" Align="Align.Center" GutterBottom="true">@Resume.Summary</MudText>
+                        <MudStack Row="true" Justify="Justify.Center" Spacing="4" Class="mt-2">
+                            <MudLink Href="@($"mailto:{Resume.Email}")" Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.Email" Class="mr-1"/>@Resume.Email</MudLink>
+                            <MudLink Href="@($"tel:{Resume.Phone}")" Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.Phone" Class="mr-1"/>@Resume.Phone</MudLink>
+                            <MudLink Href="@Resume.WebsiteUrl" Target="_blank" Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.Language" Class="mr-1"/>Website</MudLink>
+                            <MudLink Href="@Resume.LinkedInUrl" Target="_blank" Typo="Typo.body2"><MudIcon Icon="@Icons.Custom.Brands.LinkedIn" Class="mr-1"/>LinkedIn</MudLink>
+                        </MudStack>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem Xs="12" Md="8">
+            <MudCard Outlined="true">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h5">Professional Experience</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudTimeline>
+                        @foreach (var job in Resume.Experience)
+                        {
+                            <MudTimelineItem>
+                                <MudText Typo="Typo.h6">@job.Title</MudText>
+                                <MudText Typo="Typo.subtitle1">@job.Company</MudText>
+                                <MudText Typo="Typo.caption">@job.StartDate – @job.EndDate (@job.Duration)</MudText>
+                                @* <ul class="mt-2">
+                                    @foreach (var point in job.BulletPoints)
+                                    {
+                                        <li><MudText Typo="Typo.body2">@point</MudText></li>
+                                    }
+                                </ul> *@
+                            </MudTimelineItem>
+                        }
+                    </MudTimeline>
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Outlined="true" Class="mt-4">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h5">Projects</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    @foreach (var project in Resume.Projects)
+                    {
+                        <div class="mb-4">
+                            <MudText Typo="Typo.h6">@project.Name</MudText>
+                            <MudText Typo="Typo.subtitle2">@project.Affiliation</MudText>
+                            <MudText Typo="Typo.caption">@project.Date</MudText>
+                            <ul class="mt-2">
+                                @foreach (var point in project.BulletPoints)
+                                {
+                                    <li><MudText Typo="Typo.body2">@point</MudText></li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem Xs="12" Md="4">
+            <MudCard Outlined="true">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h5">Skills</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    @foreach (var skillCategory in Resume.Skills)
+                    {
+                        <MudText Typo="Typo.h6" GutterBottom="true">@skillCategory.Category</MudText>
+                        <MudChipSet T="string">
+                            @foreach (var skill in skillCategory.SkillList)
+                            {
+                                <MudChip>@skill</MudChip>
+                            }
+                        </MudChipSet>
+                    }
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Outlined="true" Class="mt-4">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h5">Education</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    @foreach (var edu in Resume.Education)
+                    {
+                        <div class="mb-3">
+                            <MudText Typo="Typo.h6">@edu.Degree</MudText>
+                            <MudText Typo="Typo.subtitle1">@edu.University</MudText>
+                            <MudText Typo="Typo.caption">@edu.StartDate – @edu.EndDate</MudText>
+                        </div>
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private ResumeData Resume = new ResumeData();
+
+    protected override void OnInitialized()
+    {
+        Resume = new ResumeData
+        {
+            Name = "Vinit Jain",
+            Email = "jain.vinit14@gmail.com",
+            Phone = "(326) 467-3876",
+            WebsiteUrl = "https://vnitjain.github.io/webresume",
+            LinkedInUrl = "https://linkedin.com/in/vnitjain",
+            Summary = "Full Stack Software Engineer with 5+ years of experience designing scalable web solutions using React.js, Node.js, Spring Boot, AWS Lambda, PostgreSQL, and TypeScript.",
+            Experience = new List<Job>
+            {
+                new Job
+                {
+                    Title = "Software Development Engineer",
+                    Company = "NexusBlue",
+                    StartDate = "May 2024",
+                    EndDate = "Present",
+                    Duration = "1 Year",
+                    @* BulletPoints = new List<string>
+                    {
+                        "Led a redesign of a client website from WordPress to Node.js, re-architected all the components into React Typescript components and moved the backend logic REST APIs to Spring Boot to provide more features and flexibility and then deployed it to an AWS Lambda instance.",
+                        "Engineered a system to scrape and gather web data using Selenium in Java and retrieve intent data for sales and marketing from 1000s of websites and articles of companies via Large Language Model APIs, including Llama3 APIs.",
+                        "Developed a novel NLP based system while interacting with the CEO to automate classification of 100s of PDFs using transformer AI models like DistilBERT, leveraging PyTorch for model deployment with Docker."
+                    } *@
+                },
+                new Job
+                {
+                    Title = "Senior Software Engineer",
+                    Company = "LTIMindtree/Marsh McLennan",
+                    StartDate = "Aug 2019",
+                    EndDate = "Jul 2023",
+                    Duration = "4 Years",
+                    @* BulletPoints = new List<string>
+                    {
+                        "Designed and developed software solutions for our insurance clients at Marsh & McLennan using technologies like React, HTML, CSS, TaildwindCSS, React Router, Redux, Mocha in the Frontend and Spring Boot in the backend to connect to the PostgreSQL DB and writing and maintaining their infrastructure codebase all of which is deployed on AWS Lambda.",
+                        "Managed a small team of 3 professionals to successfully deliver a new website workflow architecture and REST API, Microservices to interact with Oracle Databases and OAuth security systems, replacing the old paper-based process during the pandemic, for 1000s of users to fill in their bank details, update their insurance details, and retirement details online.",
+                        "Developed and deployed scalable enterprise applications, leveraging Java with Spring Boot for microservices architecture and Spring Framework for dependency injection, JPA, JDBC, JUnit, PostgreSQL, OracleDB and web application development using Agile Methodology."
+                    } *@
+                }
+            },
+            Education = new List<Education>
+            {
+                new Education
+                {
+                    Degree = "Master of Science in Computer Science",
+                    University = "University of Dayton",
+                    StartDate = "July 2023",
+                    EndDate = "May 2025"
+                },
+                new Education
+                {
+                    Degree = "Bachelor of Engineering in Computer Engineering",
+                    University = "University of Mumbai",
+                    StartDate = "July 2015",
+                    EndDate = "May 2019"
+                }
+            },
+            Skills = new List<SkillCategory>
+            {
+                new SkillCategory
+                {
+                    Category = "Frontend",
+                    SkillList = new List<string> { "React", "TypeScript", "React Router", "Tailwind CSS", "Mocha", "Jest", "HTML", "CSS", "Adobe Analytics", "Selenium" }
+                },
+                new SkillCategory
+                {
+                    Category = "Backend",
+                    SkillList = new List<string> { "Node.js", "Spring Boot", "Spring Security", "JDBC", "PostgreSQL", "Java", "Express.js", "NestJs", "OracleDB" }
+                },
+                new SkillCategory
+                {
+                    Category = "Cloud",
+                    SkillList = new List<string> { "AWS Lambda", "Adobe Experience Cloud" }
+                },
+                new SkillCategory
+                {
+                    Category = "DevOps",
+                    SkillList = new List<string> { "Git", "Jenkins", "Docker" }
+                }
+            },
+            Projects = new List<Project>
+            {
+                new Project
+                {
+                    Name = "File analysis with AI",
+                    Affiliation = "NexusBlue",
+                    Date = "May 2024 – July 2024",
+                    BulletPoints = new List<string>
+                    {
+                        "Utilizing the open source LLMs such as Llama 3.2 vision, to analyse file content and metadata, determining the confidentiality of the file and presenting it to the front end written in React.js.",
+                        "Employing Electron.js to ensure cross platform compatibility to run seamlessly, while only maintaining just one codebase."
+                    }
+                },
+                new Project
+                {
+                    Name = "Dayton Home Repair Survey",
+                    Affiliation = "Open-Source Code for Dayton",
+                    Date = "July 2024",
+                    BulletPoints = new List<string>
+                    {
+                        "Contributed features and debugged for a home repair survey and resolved bugs in Node.js using the React framework."
+                    }
+                },
+                new Project
+                {
+                    Name = "Transition to Pension Workflow",
+                    Affiliation = "LTIMindtree",
+                    Date = "October 2021 - March 2022",
+                    BulletPoints = new List<string>
+                    {
+                        "Orchestrated the design and development of 3 workflows to collect user information through web forms, deploying them to AWS Lambda, replacing paper-based forms during the pandemic to ensure that lockdowns don’t affect business processes.",
+                        "Optimized the BSB number search functionality from 3 seconds to a few milliseconds by changing the JavaScript logic to use the JQuery search instead.",
+                        "Connected with technical leadership teams from Australia to understand and build front-end web applications as per the UX designs and refine the project requirements and quality using SDLC/Agile methodology to achieve ideal user friendliness and attract 10% more customers."
+                    }
+                }
+            }
+        };
+    }
+
+    public class ResumeData
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string WebsiteUrl { get; set; }
+        public string LinkedInUrl { get; set; }
+        public string Summary { get; set; }
+        public List<Job> Experience { get; set; }
+        public List<Education> Education { get; set; }
+        public List<SkillCategory> Skills { get; set; }
+        public List<Project> Projects { get; set; }
+    }
+
+    public class Job
+    {
+        public string Title { get; set; }
+        public string Company { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public string Duration { get; set; }
+        public List<string> BulletPoints { get; set; }
+    }
+
+    public class Education
+    {
+        public string Degree { get; set; }
+        public string University { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+    }
+
+    public class SkillCategory
+    {
+        public string Category { get; set; }
+        public List<string> SkillList { get; set; }
+    }
+
+    public class Project
+    {
+        public string Name { get; set; }
+        public string Affiliation { get; set; }
+        public string Date { get; set; }
+        public List<string> BulletPoints { get; set; }
+    }
+}
